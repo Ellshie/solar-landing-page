@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RobotsHelper | AI Appointment Setting for Solar</title>
+    
+    <!-- Google Fonts: Poppins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome for Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+    <style>
+        /* --- CSS RESET & VARIABLES (MATCHING HVAC FORMAT) --- */
+        :root {
+            --primary-accent: #EAB308; /* Gold/Amber */
+            --primary-hover: #D97706; 
+            --bg-white: #FFFFFF;
+            --bg-off-white: #F8F8F8;
+            --text-primary: #1E293B; /* Deep Navy Slate */
+            --text-secondary: #475569; /* Slate 600 */
+            --nav-border: #E2E8F0;
+            --card-bg: #FFFFFF;
+            --card-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            --success: #16a34a;
+            --danger: #dc2626;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-white);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        a { text-decoration: none; color: inherit; transition: 0.3s; }
+        ul { list-style: none; }
+
+        /* --- TYPOGRAPHY --- */
+        h1, h2, h3, h4, h5 {
+            font-weight: 700;
+            line-height: 1.2;
+            color: #1E293B!important;
+        }
+
+        h1 { font-size: 2.8rem; letter-spacing: -1px; }
+        h2 { font-size: 2.2rem; margin-bottom: 1rem; letter-spacing: -0.5px; }
+        h3 { font-size: 1.5rem; margin-bottom: 0.5rem; }
+        
+        p { color: var(--text-secondary); margin-bottom: 1rem; font-size: 1.05rem; font-weight: 400; }
+        strong { color: var(--text-primary); font-weight: 600; }
+
+        .text-gold { color: #EAB308; }
+        .text-center { text-align: center; }
+        .text-uppercase { text-transform: uppercase; letter-spacing: 1px; }
+
+        /* --- LAYOUT UTILITIES --- */
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .section-padding { padding: 80px 0; }
+        
+        .bg-white { background-color: var(--bg-white); }
+        .bg-gray { background-color: var(--bg-off-white); }
+        
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 50px; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; }
+        .flex-center { display: flex; justify-content: center; align-items: center; }
+
+        /* --- NAVIGATION --- */
+        nav {
+            background-color: var(--bg-white);
+            border-bottom: 1px solid var(--nav-border);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            padding: 15px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+        }
+
+        .nav-inner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* LOGO STYLES (UPDATED) */
+        .logo-container {
+            font-weight: 800;
+            font-size: 1.2rem; /* Adjusted based on reference */
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            /* gap: 10px; Removed gap, using margin on img instead to match reference */
+        }
+
+        .logo-container .site-logo {
+            height: 40px;
+            width: auto;
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav-links a {
+            font-weight: 500;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-accent);
+        }
+        
+        .nav-links a.active-link {
+            color: var(--primary-accent);
+            font-weight: 700;
+        }
+
+        /* --- BUTTONS --- */
+        .btn {
+            display: inline-block;
+            background-color: var(--primary-accent);
+            color: #FFFFFF;
+            font-weight: 700;
+            padding: 16px 36px;
+            border-radius: 50px;
+            font-size: 1rem;
+            text-transform: uppercase;
+            box-shadow: 0 10px 20px rgba(234, 179, 8, 0.25);
+            cursor: pointer;
+            border: none;
+            transition: transform 0.2s, background-color 0.2s;
+        }
+
+        .btn:hover {
+            background-color: #1E293B;
+            transform: translateY(-2px);
+        }
+        
+        .btn-outline {
+            background-color: transparent;
+            border: 2px solid var(--primary-accent);
+            color: var(--primary-hover);
+            box-shadow: none;
+        }
+        
+        .btn-outline:hover {
+            background-color: var(--primary-accent);
+            color: #FFFFFF;
+        }
+
+        .btn-sm {
+            padding: 10px 24px;
+            font-size: 0.9rem;
+            box-shadow: none;
+        }
+
+        /* --- TOOLTIPS --- */
+        .tooltip-container {
+            position: relative;
+            display: inline-block;
+            cursor: help;
+            border-bottom: 1px dashed #cbd5e1;
+        }
+
+        .tooltip-text {
+            visibility: hidden;
+            width: 220px;
+            background-color: var(--text-primary);
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 10px;
+            position: absolute;
+            z-index: 10;
+            bottom: 135%;
+            left: 50%;
+            margin-left: -110px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.85rem;
+            font-weight: 400;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+            line-height: 1.4;
+        }
+
+        .tooltip-text::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: var(--text-primary) transparent transparent transparent;
+        }
+
+        .tooltip-container:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        /* --- HERO SECTION --- */
+        .hero {
+            background-color: var(--bg-white);
+            padding-top: 60px;
+            padding-bottom: 80px;
+        }
+
+        .vsl-box {
+            background-color: #000;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 800px;
+            aspect-ratio: 16/9;
+            margin: 50px auto 0;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.15);
+            cursor: pointer;
+            overflow: hidden;
+        }
+
+        .play-btn {
+            font-size: 5rem;
+            color: var(--primary-accent);
+            opacity: 0.9;
+            transition: 0.3s;
+            z-index: 2;
+        }
+
+        .vsl-box:hover .play-btn { transform: scale(1.1); opacity: 1; }
+
+        /* --- FEATURE GRID --- */
+        .feature-card {
+            background-color: var(--bg-white);
+            padding: 35px;
+            border-radius: 16px;
+            border: 1px solid #f1f5f9;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            transition: 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            border-color: var(--primary-accent);
+        }
+
+        .feature-icon {
+            font-size: 2rem;
+            color: #EAB308;
+            margin-bottom: 20px;
+            background: #fffbeb;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+
+        /* --- PRICING --- */
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr); /* Solar has 3 tiers */
+            gap: 20px;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .pricing-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid #e2e8f0;
+            position: relative;
+            box-shadow: var(--card-shadow);
+        }
+
+        .pricing-card.recommended {
+            border: 2px solid var(--primary-accent);
+            background: linear-gradient(180deg, #fffbeb 0%, #ffffff 100%);
+            transform: scale(1.05);
+            z-index: 10;
+        }
+
+        .badge {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: var(--primary-accent);
+            color: #FFFFFF;
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .price-large {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin: 20px 0 0 0;
+            letter-spacing: -1px;
+        }
+
+        .price-sub { font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 20px; }
+        
+        .price-per-appt { 
+            color: #EAB308; 
+            font-weight: 700; 
+            margin-bottom: 20px; 
+            display: block;
+        }
+
+        .feature-list li {
+            margin-bottom: 14px;
+            display: flex;
+            align-items: flex-start;
+            font-size: 0.9rem;
+            color: var(--text-primary);
+        }
+
+        .feature-list i { color: var(--success); margin-right: 12px; margin-top: 4px; }
+
+        /* --- COMPARISON TABLE --- */
+        .table-wrapper { 
+            overflow-x: auto; 
+            background: white; 
+            border-radius: 12px; 
+            box-shadow: var(--card-shadow); 
+            padding: 1rem;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 20px 25px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f8fafc;
+            font-weight: 700;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        td { color: var(--text-secondary); }
+        
+        /* Remove borders for clean look */
+        .table-wrapper table, .table-wrapper th, .table-wrapper td, .table-wrapper tr {
+            border: none !important;
+        }
+
+        .col-highlight {
+            background-color: #fffbeb;
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        /* --- FAQ --- */
+        .faq-item {
+            background-color: var(--card-bg);
+            margin-bottom: 15px;
+            border-radius: 12px;
+            padding: 25px;
+            border: 1px solid #e2e8f0;
+            transition: 0.3s;
+        }
+        
+        .faq-item:hover { border-color: #cbd5e1; }
+        
+        .faq-question { font-weight: 700; font-size: 1.1rem; color: var(--text-primary); margin-bottom: 8px; }
+        .faq-answer { color: var(--text-secondary); font-size: 1rem; line-height: 1.6; }
+
+        /* --- RESPONSIVE --- */
+        @media (max-width: 1024px) { /* Increased breakpoint for tablet */
+            h1 { font-size: 2.2rem; }
+            .grid-2, .grid-3, .pricing-grid { grid-template-columns: 1fr; }
+            .pricing-card.recommended { transform: none; margin-top: 30px; }
+            .nav-links { display: none; }
+            
+            .tooltip-text {
+                width: 200px;
+                left: 0;
+                margin-left: -50px;
+            }
+
+            /* Hiding Image Logo in Tablet & Mobile */
+            .logo-container .site-logo {
+                display: none;
+            }
+
+            /* Adjust Button Size for Mobile/Tablet */
+            .btn-sm {
+                padding: 10px 18px; /* Slightly reduced padding */
+                font-size: 0.85rem;
+            }
+
+            /* Modified Table Logic for Mobile/Tablet */
+            .table-wrapper {
+                padding: 0;
+                border: none;
+                box-shadow: none;
+            }
+            
+            /* Hide the middle two columns on mobile/tablet */
+            .table-wrapper th:nth-child(2),
+            .table-wrapper td:nth-child(2),
+            .table-wrapper th:nth-child(3),
+            .table-wrapper td:nth-child(3) {
+                display: none;
+            }
+
+            /* Ensure table is still a table, but with 2 cols */
+            .table-wrapper table {
+                width: 100%;
+                display: table;
+            }
+            
+            .table-wrapper thead {
+                display: table-header-group;
+            }
+            
+            .table-wrapper tbody {
+                display: table-row-group;
+            }
+            
+            .table-wrapper tr {
+                display: table-row;
+                background: white;
+                border-bottom: 1px solid #eee;
+            }
+            
+            .table-wrapper th, .table-wrapper td {
+                display: table-cell;
+                width: 50%; /* Each takes half */
+                padding: 15px;
+            }
+            
+            /* Remove the :before content injection since we are keeping table structure */
+            .table-wrapper td::before {
+                content: none;
+                display: none;
+            }
+
+            /* Style adjustments for remaining columns */
+            .table-wrapper th:first-child, .table-wrapper td:first-child {
+                text-align: left;
+                font-weight: 700;
+                color: var(--text-primary);
+            }
+            
+            .table-wrapper th:last-child, .table-wrapper td:last-child {
+                text-align: center;
+                background-color: #fffbeb !important; /* Keep highlight */
+            }
+            
+            .table-wrapper th:last-child {
+                background-color: var(--primary-accent) !important;
+                color: white;
+            }
+        }
+        
+        /* Special Mobile Only Fixes */
+        @media (max-width: 600px) {
+            .btn-sm {
+                padding: 8px 12px;
+                font-size: 0.8rem;
+                white-space: nowrap; /* Prevent text wrapping */
+            }
+            
+            .logo-container {
+                font-size: 1rem; /* Smaller logo text on very small screens */
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAVIGATION -->
+    <nav>
+        <div class="container nav-inner">
+            <div class="logo-container">
+                <img src="https://robotshelper.com/wp-content/uploads/2025/10/Robotshelper-Icon.webp" alt="RobotsHelper Logo" class="site-logo">
+                RobotsHelper
+            </div>
+            <div class="nav-links">
+                <a href="#problem">The Problem</a>
+                <a href="#solution">How It Works</a>
+                <a href="#reviews">Reviews</a>
+                <a href="#pricing">Pricing</a>
+            </div>
+            <div>
+                <a href="https://calendly.com/robotshelper/robots-helper-ai-phone-agent-enterprise-pricing?month=2026-01" class="btn btn-sm">Get Appointments</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <section class="hero bg-white">
+        <div class="container text-center">
+            <div style="display: inline-block; background: #fffbeb; color: #b45309; padding: 5px 15px; border-radius: 50px; font-weight: 600; font-size: 0.85rem; margin-bottom: 20px; border: 1px solid #fcd34d;">
+                ⚠ For Solar Business Owners Only
+            </div>
+            <h1>Most Solar Leads Are Dead By The Time You Dial.<br><span class="text-gold">Ava Calls Them In 10 Seconds.</span></h1>
+            <p style="font-size: 1.25rem; max-width: 700px; margin: 20px auto;">
+                Your human setters take hours to respond. Leads go cold. You burn cash.
+                <strong>Ava is our AI that calls instantly, qualifies homeowners, and books installs 24/7.</strong>
+            </p>
+
+            <a href="#pricing" class="btn" style="text-decoration: none;">Get 5 Qualified Appointments ($1,250)</a>
+
+            <p style="font-size: 0.9rem; margin-top: 15px; color: var(--text-secondary);">
+                <i class="fas fa-shield-alt text-gold"></i> 100% Risk Free. We book or you don't pay.
+            </p>
+
+            <!-- VSL PLACEHOLDER -->
+            <div id="vsl-section" class="vsl-box">
+                <iframe width="100%" height="100%" src="https://www.youtube.com/embed/_glCul0pCYk?rel=0" title="RobotsHelper Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+            </div>
+        </div>
+    </section>
+
+    <!-- VSL INTRO / HOOK -->
+    <section class="section-padding bg-gray">
+        <div class="container text-center" style="max-width: 800px;">
+            <h2 class="text-gold">Stop Buying "Leads." Start Buying Appointments.</h2>
+            <p style="color: var(--text-primary); font-size: 1.1rem; font-weight: 500;">
+                We don't sell you a spreadsheet of names from 2019. We connect you with homeowners who are ready to talk solar right now.
+            </p>
+            <p>
+                Most agencies charge you a $3k retainer and deliver excuses. 
+                <br><br>
+                <strong>RobotsHelper reverses the risk.</strong> We only charge you for confirmed appointments with homeowners who have a $150+ bill and 650+ credit score.
+            </p>
+        </div>
+    </section>
+
+    <!-- PROBLEM SECTION -->
+    <section id="problem" class="section-padding bg-white">
+        <div class="container">
+            <h2 class="text-center mb-5">The "Profit Killers" of Your Solar Business</h2>
+            <div class="grid-3">
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-hourglass-end"></i></div>
+                    <h3>Speed to Lead: 4+ Hours</h3>
+                    <p>By the time your rep calls, the homeowner has forgotten they filled out the form or is already talking to SunRun.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-wallet"></i></div>
+                    <h3>The "Retainer" Trap</h3>
+                    <p>You pay marketing agencies $3,000/mo regardless of performance. They get paid even if you get zero installs.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-ban"></i></div>
+                    <h3>Unqualified Junk</h3>
+                    <p>Your team wastes hours talking to renters, people with 500 credit scores, or bills under $50/mo.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SOLUTION SECTION -->
+    <section id="solution" class="section-padding bg-gray">
+        <div class="container">
+            <div class="grid-2" style="align-items: center;">
+                <div>
+                    <h2 class="text-gold">The "Ava" Advantage</h2>
+                    <p>Ava is your 24/7 AI Setter that never sleeps, never complains, and strikes while the iron is hot.</p>
+                    <ul class="feature-list" style="font-size: 1.1rem;">
+                        <li><i class="fas fa-check-circle text-gold"></i> <strong>Speed to Lead:</strong> < 10 Seconds response time.</li>
+                        <li><i class="fas fa-check-circle text-gold"></i> <strong>Triple Qualification:</strong> Homeowner + Credit + Bill verification.</li>
+                        <li><i class="fas fa-check-circle text-gold"></i> <strong>Infinite Scale:</strong> Can make 1,000 calls simultaneously.</li>
+                        <li><i class="fas fa-check-circle text-gold"></i> <strong>CRM Sync:</strong> Injects data into HubSpot/GHL instantly.</li>
+                    </ul>
+                </div>
+                <div style="background: white; padding: 40px; border-radius: 20px; box-shadow: var(--card-shadow); border: 1px solid #e2e8f0;">
+                    <h4 class="text-center mb-3 text-gold">The "Triple Qualified" Guarantee</h4>
+                    <p style="font-style: italic; color: var(--text-primary); text-align: center;">
+                        "Before we book the appointment, Ava verifies three non-negotiables:<br><br>
+                        <strong>1. They own the home.</strong><br>
+                        <strong>2. Electric Bill > $150.</strong><br>
+                        <strong>3. Credit Score > 650.</strong><br><br>
+                        If they don't pass, they don't get on your calendar."
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- COMPARISON TABLE -->
+    <section id="comparison-table" class="section-padding bg-white">
+        <div class="container">
+            <h2 class="text-center">Why Top Teams Switch to RobotsHelper</h2>
+            <div class="table-wrapper mt-5">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Feature</th>
+                            <th>Standard Lead Agency</th>
+                            <th>Human Setters</th>
+                            <th class="col-highlight">RobotsHelper (Ava)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Response Time</strong></td>
+                            <td>4 Hours+</td>
+                            <td>15-30 Minutes</td>
+                            <td class="col-highlight"><strong>Instant (10 Seconds)</strong></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Cost Model</strong></td>
+                            <td>Monthly Retainer ($5k)</td>
+                            <td>Hourly + Comm</td>
+                            <td class="col-highlight"><strong>Pay Per Appointment</strong></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Availability</strong></td>
+                            <td>9 AM - 5 PM</td>
+                            <td>Sick days / Breaks</td>
+                            <td class="col-highlight"><strong>24/7/365</strong></td>
+                        </tr>
+                        <tr>
+                            <td><strong>CRM Integration</strong></td>
+                            <td>Spreadsheet / CSV</td>
+                            <td>Manual Entry</td>
+                            <td class="col-highlight"><strong>Instant Injection</strong></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Capacity</strong></td>
+                            <td>Limited</td>
+                            <td>Limited (Burnout)</td>
+                            <td class="col-highlight"><strong>Infinite Scale</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- PRICING SECTION -->
+    <section class="section-padding bg-gray" id="pricing">
+        <div class="container text-center">
+            <h2 class="mb-2">Transparent Pricing. No Retainers.</h2>
+            <p class="mb-5">Choose your volume. Pause anytime. We assume the financial risk.</p>
+            
+            <div class="pricing-grid">
+                
+                <!-- Starter Pack -->
+                <div class="pricing-card">
+                    <h3>Starter Pack</h3>
+                    <p class="price-sub">For solo reps testing the waters.</p>
+                    
+                    <div class="price-large">$1,250</div>
+                    <span class="price-per-appt">$250 / Appointment</span>
+                    
+                    <ul class="feature-list text-left">
+                        <li><i class="fas fa-check"></i> <strong>5 Confirmed Appts</strong></li>
+                        <li><i class="fas fa-check"></i> <span class="tooltip-container">Triple-Qualified <span class="tooltip-text">Homeowner, Credit 650+, Bill > $150</span></span></li>
+                        <li><i class="fas fa-check"></i> Recording of Calls</li>
+                        <li><i class="fas fa-check"></i> SMS Reminders</li>
+                    </ul>
+
+                    <a href="https://buy.stripe.com/00wcN7gOJ0ao2Wcc0DdQQ08" class="btn btn-outline" style="width: 100%; margin-top: 25px;">Get Starter Pack</a>
+                </div>
+
+                <!-- Scale Pack -->
+                <div class="pricing-card recommended">
+                    <div class="badge">MOST POPULAR</div>
+                    <h3>Scale Pack</h3>
+                    <p class="price-sub">For teams ready to grow.</p>
+                    
+                    <div class="price-large">$2,250</div>
+                    <span class="price-per-appt">$225 / Appointment</span>
+                    
+                    <ul class="feature-list text-left">
+                        <li><i class="fas fa-check"></i> <strong>10 Confirmed Appts</strong></li>
+                        <li><i class="fas fa-check"></i> Triple-Qualified</li>
+                        <li><i class="fas fa-check"></i> <span class="tooltip-container">CRM Injection <span class="tooltip-text">Push data to HubSpot, GHL, or Salesforce instantly.</span></span></li>
+                        <li><i class="fas fa-check"></i> Priority Support</li>
+                        <li><i class="fas fa-check"></i> Credit Replacement Guarantee</li>
+                    </ul>
+
+                    <a href="https://buy.stripe.com/dRmcN75614qE1S81lZdQQ09" class="btn" style="width: 100%; margin-top: 25px;">Get Scale Pack</a>
+                </div>
+
+                <!-- Dominator Pack -->
+                <div class="pricing-card">
+                    <h3>Dominator</h3>
+                    <p class="price-sub">Aggressive expansion mode.</p>
+                    
+                    <div class="price-large">$4,000</div>
+                    <span class="price-per-appt">$200 / Appointment</span>
+                    
+                    <ul class="feature-list text-left">
+                        <li><i class="fas fa-check"></i> <strong>20 Confirmed Appts</strong></li>
+                        <li><i class="fas fa-check"></i> Triple-Qualified</li>
+                        <li><i class="fas fa-check"></i> CRM Injection</li>
+                        <li><i class="fas fa-check"></i> <span class="tooltip-container">Custom Voice Cloning <span class="tooltip-text">Ava trains on your best rep's voice.</span></span></li>
+                        <li><i class="fas fa-check"></i> Dedicated Account Mgr</li>
+                    </ul>
+
+                    <a href="https://buy.stripe.com/dRm14peGB4qE54k1lZdQQ0a" class="btn btn-outline" style="width: 100%; margin-top: 25px;">Get Dominator</a>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ SECTION -->
+    <section id="faq" class="section-padding bg-white">
+        <div class="container" style="max-width: 800px;">
+            <h2 class="text-center mb-5">Technical FAQs</h2>
+            
+            <div class="faq-item">
+                <div class="faq-question">Does Ava actually sound like a robot?</div>
+                <div class="faq-answer">No. We use advanced latency-free voice synthesis. She breathes, pauses, and understands context. 95% of prospects believe they are speaking to a human in your local office.</div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">How does she handle Spanish speakers?</div>
+                <div class="faq-answer">Ava detects language instantly. If a prospect answers in Spanish, she switches seamlessly to Spanish in real-time without dropping the call.</div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">Does she integrate with GoHighLevel?</div>
+                <div class="faq-answer">Yes. We have native integrations for GHL, HubSpot, Salesforce, and Pipedrive. When an appointment is booked, it appears on your calendar instantly.</div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">What happens if the lead is a no-show?</div>
+                <div class="faq-answer">Our system includes automated SMS and email reminders. However, if a booked appointment is a "no-show," we offer a credit replacement guarantee on our Scale and Dominator plans.</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FINAL CTA -->
+    <section class="section-padding text-center bg-gray" style="border-top: 1px solid #e2e8f0;">
+        <div class="container">
+            <h2 style="font-size: 2.5rem; margin-bottom: 20px;">Ready to Fill Your Calendar?</h2>
+            <p style="font-size: 1.25rem; margin-bottom: 40px; color: var(--text-secondary);">Your competitors are still buying shared leads. Get the unfair advantage.</p>
+            <a href="#pricing" class="btn" style="padding: 20px 50px; font-size: 1.3rem; text-decoration: none;">Choose Your Pack</a>
+        </div>
+    </section>
+
+    <footer style="background-color: #1e293b; padding: 30px 0; text-align: center; color: #94a3b8; font-size: 0.9rem;">
+        <div class="container">
+           <div class="logo-container" style="display: flex; align-items: center; justify-content: center; margin-bottom: 15px;">
+                <img src="https://robotshelper.com/wp-content/uploads/2025/10/Robotshelper-Icon.webp" alt="RobotsHelper Logo" class="site-logo">
+                <span style="color: #ffffff; font-size: 1.2rem; font-weight: bold;">RobotsHelper</span>
+            </div>
+            <p style="color: #ffffff;">&copy; 2024 RobotsHelper. Providing financial risk-free appointments to the Solar Industry.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Active Link Logic
+        document.addEventListener('DOMContentLoaded', () => {
+            const navLinks = document.querySelectorAll('.nav-links a');
+            
+            const setActiveLink = (targetId) => {
+                navLinks.forEach(link => {
+                    link.classList.remove('active-link');
+                });
+                const activeLink = Array.from(navLinks).find(link => link.getAttribute('href') === '#' + targetId);
+                if (activeLink) {
+                    activeLink.classList.add('active-link');
+                }
+            };
+            
+            const updateActiveLink = () => {
+                let currentSectionId = '';
+                const sections = document.querySelectorAll('#problem, #solution, #reviews, #pricing, #faq');
+                const scrollOffset = 150;
+
+                sections.forEach(section => {
+                    const rect = section.getBoundingClientRect();
+                    if (rect.top <= scrollOffset && rect.bottom >= scrollOffset) {
+                        currentSectionId = section.id;
+                    }
+                });
+                
+                if(currentSectionId) {
+                    setActiveLink(currentSectionId);
+                }
+            };
+
+            updateActiveLink();
+
+            navLinks.forEach(link => {
+                link.addEventListener('click', function() {
+                    setTimeout(() => {
+                        const targetId = this.getAttribute('href').substring(1);
+                        setActiveLink(targetId);
+                    }, 50); 
+                });
+            });
+
+            window.addEventListener('scroll', updateActiveLink);
+            window.addEventListener('resize', updateActiveLink);
+
+            // Table Mobile Responsiveness Logic
+            const table = document.querySelector(".table-wrapper table");
+            const headers = table.querySelectorAll("thead th");
+            const rows = table.querySelectorAll("tbody tr");
+
+            rows.forEach(row => {
+                const cells = row.querySelectorAll("td");
+                cells.forEach((cell, i) => {
+                    cell.setAttribute("data-label", headers[i].innerText.trim());
+                });
+            });
+        });
+    </script>
+
+</body>
+</html>
